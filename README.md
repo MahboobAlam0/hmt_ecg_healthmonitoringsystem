@@ -121,7 +121,7 @@ Accuracy saturates due to ambiguous ECGs, while AUROC remains high — indicatin
 
 ---
 
-## Demo
+## Deployment Demo
 
 Due to dataset licensing and size constraints, this project is not deployed as a public live demo.
 
@@ -132,16 +132,19 @@ To launch the interactive ECG visualization and AI diagnosis interface:
 ```bash
 streamlit run app.py
 ```
-## Demo Video
+
+This repository includes a **production-style demo**:
+
+- **FastAPI** inference server
+- **Streamlit** UI
+  - Live ECG visualization
+  - Real-time predictions
+  - MI risk screening
+- Uses **unseen PTB-XL test ECGs**
+
 
 [![ECG Demo](artifacts/demo.png)](https://github.com/MahboobAlam0/hmt_ecg_healthmonitoringsystem/issues/1#issue-3938528989)
 
-
-That’s it.  
-That section alone answers **three recruiter questions** at once:
-- “Why no demo?”
-- “Does it actually run?”
-- “Can I try it if I want?”
 
 ---
 
@@ -184,18 +187,6 @@ There is **no patient leakage**, **no test-set tuning**, and **no post-hoc thres
 
 ---
 
-## Deployment Demo
-
-This repository includes a **production-style demo**:
-
-- **FastAPI** inference server
-- **Streamlit** UI
-  - Live ECG visualization
-  - Real-time predictions
-  - MI risk screening
-- Uses **unseen PTB-XL test ECGs**
-
----
 
 ## Project Structure
 
