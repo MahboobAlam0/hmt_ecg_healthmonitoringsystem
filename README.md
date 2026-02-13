@@ -70,8 +70,8 @@ There is **no patient leakage**, **no test-set tuning**, and **no post-hoc thres
 ## Architecture: HMT-ECGNet
 
 ### High-Level Design
-=====
-12-Lead ECG (10s)
+├── ...
+├─ 12-Lead ECG (10s)
 │
 ├─ Shared per-lead temporal encoder
 │
@@ -82,7 +82,7 @@ There is **no patient leakage**, **no test-set tuning**, and **no post-hoc thres
 ├─ Global temporal pooling
 │
 └─ Classification head
-=====
+└── ...
 
 ### Design Principles
 
@@ -173,8 +173,9 @@ This repository includes a **production-style demo**:
 ---
 
 ## Project Structure
-=====
-hmt_ecgnet/
+
+├── ...
+├── hmt_ecgnet/
 ├── artifacts/
 │   ├── mi_best.pth
 │   ├── multilabel_best.pth
@@ -197,7 +198,7 @@ hmt_ecgnet/
 ├── threshold_search_multilabel.py
 ├── config.py
 └── README.md
-=====
+└── ...
 
 
 ---
