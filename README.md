@@ -174,14 +174,15 @@ This repository includes a **production-style demo**:
 
 ## Project Structure
 
-hmt_ecgnet/
-├── artifacts/
+hmt_ecgnet/.gitkeep
+├── artifacts/.gitkeep
 │ ├── mi_best.pth
 │ ├── multilabel_best.pth
 │ ├── multilabel_thresholds.json
 │ └── resnet_baseline.pth
 │
-├── models/
+├── .gitignore
+├── models/.gitkeep
 │ ├── hmt_ecgnet.py
 │ └── resnet1d.py
 │
