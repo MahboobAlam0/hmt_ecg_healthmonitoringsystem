@@ -174,7 +174,6 @@ This repository includes a **production-style demo**:
 
 ## Project Structure
 
-├── ...
 ├── hmt_ecgnet/
 ├── artifacts/
 │   ├── mi_best.pth
@@ -198,7 +197,6 @@ This repository includes a **production-style demo**:
 ├── threshold_search_multilabel.py
 ├── config.py
 └── README.md
-└── ...
 
 
 ---
