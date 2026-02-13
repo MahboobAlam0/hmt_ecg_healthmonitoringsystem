@@ -15,12 +15,12 @@ This repository represents an **end-to-end ML system** — from data preprocessi
 
 ## Key Contributions
 
-- ✅ **Hierarchical multi-lead ECG modeling** (lead-wise → global aggregation)
-- ✅ **Sub-million parameter architecture** (~0.34M params)
-- ✅ **Strict PTB-XL official splits** (no patient leakage)
-- ✅ **Honest evaluation** (no test-set threshold tuning)
-- ✅ **End-to-end deployment demo** (FastAPI + Streamlit)
-- ✅ **Baseline comparison with ResNet**
+- **Hierarchical multi-lead ECG modeling** (lead-wise → global aggregation)
+- **Sub-million parameter architecture** (~0.34M params)
+- **Strict PTB-XL official splits** (no patient leakage)
+- **Honest evaluation** (no test-set threshold tuning)
+- **End-to-end deployment demo** (FastAPI + Streamlit)
+- **Baseline comparison with ResNet**
 
 ---
 
@@ -132,7 +132,7 @@ There is **no patient leakage**, **no test-set tuning**, and **no post-hoc thres
 | Accuracy | ≈ 0.92–0.93 |
 | F1 | ≈ **0.89** |
 
-📌 **Observation:**  
+**Observation:**  
 Accuracy saturates due to ambiguous ECGs, while AUROC remains high — indicating strong class separability under realistic conditions.
 
 ---
@@ -144,7 +144,7 @@ Accuracy saturates due to ambiguous ECGs, while AUROC remains high — indicatin
 | **ResNet-1D** | ~8.7M | ≈ 0.90 | ≈ 0.70 |
 | **HMT-ECGNet (ours)** | **0.34M** | **≈ 0.92** | **≈ 0.73** |
 
-✔ **HMT-ECGNet outperforms ResNet while using ~25× fewer parameters**
+**HMT-ECGNet outperforms ResNet while using ~25× fewer parameters**
 
 ---
 
