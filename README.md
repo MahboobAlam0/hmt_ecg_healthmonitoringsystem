@@ -1,234 +1,242 @@
 # HMT-ECGNet  
-**A Lightweight Hierarchical Multi-Lead ECG Model for PTB-XL**
+**Lightweight Hierarchical Multi-Lead ECG Classification on PTB-XL**
 
 ---
 
-## 1. Overview
+## Overview
 
-**HMT-ECGNet** is a **lightweight hierarchical neural network** designed for 12-lead ECG classification on the **PTB-XL** dataset.  
-The goal of this project is **not** to chase state-of-the-art leaderboard numbers, but to answer a more practical and honest question:
+**HMT-ECGNet** is a **lightweight, hierarchical deep learning system** for automatic ECG interpretation, designed and evaluated on the **PTB-XL** dataset under **strict, leakage-free conditions**.
 
-> **How much performance can we realistically extract from PTB-XL using a compact, deployment-friendly model under strict, leakage-free evaluation?**
+The project demonstrates that **carefully designed, parameter-efficient neural architectures** can achieve **competitive diagnostic performance** compared to large CNNs (e.g., ResNet) while remaining **deployable in real-world clinical and edge environments**.
 
-This project demonstrates that a **~0.34M parameter hierarchical model** can match or exceed the performance of much larger CNN baselines when evaluated correctly.
-
----
-
-## 2. Motivation & Problem Statement
-
-Most modern ECG classification systems rely on:
-- deep CNN stacks (ResNet-like),
-- or Transformer-based architectures,
-- often with **millions to tens of millions of parameters**.
-
-While these models report strong metrics, they frequently suffer from:
-- patient-level data leakage,
-- improper train/validation/test separation,
-- threshold tuning on the test set,
-- over-reliance on accuracy despite heavy class imbalance.
-
-### This project focuses on:
-- **strict adherence to official PTB-XL splits**,  
-- **no test-time tuning**,  
-- **transparent reporting of AUROC and F1**,  
-- and **parameter efficiency**.
+This repository represents an **end-to-end ML system** — from data preprocessing and training to evaluation, inference API, and interactive visualization.
 
 ---
 
-## 3. Dataset: PTB-XL
+## Key Contributions
 
-- **Records:** ~21,800 ECGs  
-- **Leads:** 12  
-- **Duration:** 10 seconds  
-- **Sampling rate:** 500 Hz (downsampled to 250 Hz)  
-- **Splits:** Official PTB-XL train / validation / test folds  
+- ✅ **Hierarchical multi-lead ECG modeling** (lead-wise → global aggregation)
+- ✅ **Sub-million parameter architecture** (~0.34M params)
+- ✅ **Strict PTB-XL official splits** (no patient leakage)
+- ✅ **Honest evaluation** (no test-set threshold tuning)
+- ✅ **End-to-end deployment demo** (FastAPI + Streamlit)
+- ✅ **Baseline comparison with ResNet**
+
+---
+
+## Problem Statement
+
+ECG classification is typically addressed using:
+- very large CNNs (10–60M parameters), or
+- Transformer-based architectures with heavy compute requirements.
+
+However, such models:
+- are difficult to deploy on **edge / wearable devices**,
+- often over-report performance due to **data leakage**,
+- ignore **realistic performance ceilings** caused by label ambiguity.
+
+> **Goal:**  
+> Can a **lightweight, hierarchical neural network** achieve strong diagnostic performance on PTB-XL when evaluated correctly?
+
+---
+
+## Dataset
+
+### PTB-XL (PhysioNet, 2020)
+
+- ~21,800 ECG recordings  
+- 12 leads  
+- 10 seconds per ECG  
+- Original sampling: 500 Hz (downsampled during preprocessing)
+- Official **patient-level splits**:
+  - Train: folds 1–8
+  - Validation: fold 9
+  - Test: fold 10
 
 ### Tasks
 
-- **Multi-label classification (5 diagnostic superclasses)**  
-  - NORM, MI, STTC, CD, HYP  
-
+- **Multi-label classification (5 diagnostic superclasses)**
+  - NORM, MI, STTC, CD, HYP
 - **Binary classification**
-  - MI vs Normal  
-  - Normal vs Abnormal  
+  - MI vs Normal
+  - Normal vs Abnormal
 
-📌 **Important:**  
-All experiments use the **official PTB-XL splits**.  
-There is **no patient leakage**, **no test-set threshold tuning**, and **no post-hoc metric adjustment**.
+⚠️ **Important:**  
+All experiments strictly follow official PTB-XL splits.  
+There is **no patient leakage**, **no test-set tuning**, and **no post-hoc threshold optimization**.
 
 ---
 
-## 4. Architecture: HMT-ECGNet
+## Architecture: HMT-ECGNet
 
 ### High-Level Design
-12-Lead ECG (2200 samples)
-│-- Shared Per-Lead Temporal Encoder
-│-- Lead-wise Feature Tokens
-│-- Hierarchical Cross-Lead Aggregation
-│-- Global Representation
-│-- Classification Head
 
+12-Lead ECG (10s)
+│
+├─ Shared per-lead temporal encoder
+│
+├─ Lead-wise feature tokens
+│
+├─ Hierarchical cross-lead aggregation
+│
+├─ Global temporal pooling
+│
+└─ Classification head
 
 
 ### Design Principles
 
-- **Hierarchical modeling**
-  - Temporal patterns are learned per lead
-  - Cross-lead relationships are learned at higher levels
-- **Weight sharing across leads** for efficiency
-- **No heavy self-attention or Transformers**
-- **Strong inductive bias for ECG structure**
+- **Per-lead temporal modeling** with shared weights
+- **Hierarchical aggregation** instead of heavy attention
+- **Explicit separation of temporal and spatial modeling**
+- **Parameter efficiency first**, accuracy second
 
 **Total parameters:** ~**338K**
 
 ---
 
-## 5. Training Protocol
+## Training Protocol
 
-- **Optimizer:** AdamW  
-- **Learning rate schedule:** Cosine Annealing  
-- **Loss:**
-  - Multi-label: `AsymmetricFocalLoss` with class imbalance handling  
-  - Binary: `BCEWithLogitsLoss`  
-- **Regularization:**
+- Optimizer: **AdamW**
+- Learning rate schedule: **Cosine Annealing**
+- Loss:
+  - Multi-label: `BCEWithLogitsLoss` with class balancing
+  - Binary: `BCEWithLogitsLoss`
+- Regularization:
+  - Signal preprocessing
   - Early stopping
-  - Mild data augmentation
-- **Reproducibility:**
+- Reproducibility:
   - Fixed random seeds
-  - Deterministic data splits
+  - Deterministic splits
 
 ---
 
-## 6. Results
+## Results
 
-### Multi-Label Classification (5 Classes, Test Set)
+### Multi-Label Classification (Test Set)
 
-| Model | Params | AUROC (macro) | F1 (macro) |
-|-----|-------:|--------------:|-----------:|
-| **HMT-ECGNet** | **0.34M** | **0.9206** | **~0.73** |
-| ResNet-1D Baseline | ~8.7M | ~0.90 | ~0.70 |
-
-📌 **Key insight:**  
-Despite being **~25× smaller**, HMT-ECGNet matches or exceeds the ResNet baseline under identical evaluation conditions.
+| Metric | HMT-ECGNet |
+|------|-----------|
+| AUROC (macro) | **≈ 0.92** |
+| AUPRC (macro) | ≈ 0.78 |
+| F1 (macro) | ≈ **0.73** |
+| Parameters | **0.34M** |
 
 ---
 
 ### Binary Classification — MI vs Normal (Test Set)
 
-| Model | Params | AUROC | F1 | Accuracy |
-|-----|-------:|------:|---:|---------:|
-| **HMT-ECGNet** | **0.34M** | **~0.98** | **~0.89** | ~0.92 |
-| ResNet-1D Baseline | ~8.7M | ~0.97 | ~0.87 | ~0.92 |
+| Metric | HMT-ECGNet |
+|------|-----------|
+| AUROC | **≈ 0.98** |
+| Accuracy | ≈ 0.92–0.93 |
+| F1 | ≈ **0.89** |
 
 📌 **Observation:**  
-Accuracy saturates due to ambiguous ECGs, while AUROC remains high, indicating strong class separability.
+Accuracy saturates due to ambiguous ECGs, while AUROC remains high — indicating strong class separability under realistic conditions.
 
 ---
 
-## 7. Why Performance Saturates on PTB-XL
+## Baseline Comparison
 
-Even strong models plateau because:
+| Model | Params | AUROC (Multi) | F1 (Multi) |
+|------|--------|--------------|------------|
+| **ResNet-1D** | ~8.7M | ≈ 0.90 | ≈ 0.70 |
+| **HMT-ECGNet (ours)** | **0.34M** | **≈ 0.92** | **≈ 0.73** |
 
-- ECG labels (especially MI) have **inter-observer disagreement**
-- Borderline and chronic cases blur class boundaries
-- PTB-XL diagnostic labels are **not pixel-perfect ground truth**
-
-This explains why:
-- AUROC can be very high,
-- but accuracy and F1 improve slowly beyond a point.
+✔ **HMT-ECGNet outperforms ResNet while using ~25× fewer parameters**
 
 ---
 
-## 8. Ensemble & Error Analysis
+## Error Analysis & Insights
 
-- Multi-seed training and ensemble averaging were evaluated
-- Ensembles improved stability but **did not significantly improve accuracy**
-- Remaining errors are **systematic and data-driven**, not due to variance
-- Confirms a **realistic performance ceiling** on PTB-XL
+- Ensemble models improve **stability**, not accuracy
+- Remaining errors are **systematic**, not variance-driven
+- Confirms a **performance ceiling** on PTB-XL due to:
+  - label ambiguity,
+  - inter-observer disagreement,
+  - borderline ECG patterns
 
 ---
 
-## 9. Project Structure
+## Deployment Demo
+
+This repository includes a **production-style demo**:
+
+- **FastAPI** inference server
+- **Streamlit** UI
+  - Live ECG visualization
+  - Real-time predictions
+  - MI risk screening
+- Uses **unseen PTB-XL test ECGs**
+
+---
+
+## Project Structure
 
 hmt_ecgnet/
 ├── artifacts/
-│ └── binary_threshold.json
-│ └── loss_graph.png
-│ └── mi_best.pth
-│ └── multilabel_best.pth
-│ └── multilabel_thresholds.json
+│ ├── mi_best.pth
+│ ├── multilabel_best.pth
+│ ├── multilabel_thresholds.json
 │ └── resnet_baseline.pth
+│
 ├── models/
-│ └── hmt_ecgnet.py
+│ ├── hmt_ecgnet.py
 │ └── resnet1d.py
+│
 ├── api.py
 ├── app.py
-├── config.py
 ├── dataset.py
+├── train_multilabel.py
+├── train_binary.py
 ├── eval_multilabel.py
 ├── eval_binary.py
-├── requirement.txt
-├── threshold_search_multilabel.py
 ├── threshold_search.py
-├── train_binary.py
-├── train_multilabel.py
-├── train_resnet_baseline.py
-├── transforms.py
+├── threshold_search_multilabel.py
+├── config.py
 └── README.md
 
 
 ---
 
-## 10. Comparison Summary
+## References
 
-| Aspect | HMT-ECGNet | ResNet-1D |
-|-----|-----------|----------|
-| Parameters | **~0.34M** | ~8.7M |
-| Architecture | Hierarchical | Deep CNN |
-| Attention | ❌ | ❌ |
-| Deployment-friendly | ✅ | ❌ |
-| AUROC (ML) | **~0.92** | ~0.90 |
-| F1 (ML) | **~0.73** | ~0.70 |
-
----
-
-## 11. References
-
-1. Wagner, P. et al.  
+1. Wagner et al.  
    **PTB-XL: A Large Publicly Available Electrocardiography Dataset**  
-   *PhysioNet, 2020.*
+   *PhysioNet, 2020*
 
-2. Ribeiro, A. H. et al.  
-   **Automatic Diagnosis of the 12-Lead ECG Using Deep Neural Networks**  
-   *Nature Communications, 2020.*
+2. Ribeiro et al.  
+   **Automatic diagnosis of the 12-lead ECG using deep neural networks**  
+   *Nature Communications, 2020*
 
-3. Hannun, A. et al.  
+3. Hannun et al.  
    **Cardiologist-Level Arrhythmia Detection with Deep Neural Networks**  
-   *Nature Medicine, 2019.*
+   *Nature Medicine, 2019*
 
-4. Rajpurkar, P. et al.  
-   **Cardiologist-Level Arrhythmia Detection Using a Deep Neural Network**  
-   *arXiv:1707.01836.*
+4. Rajpurkar et al.  
+   **Cardiologist-Level Arrhythmia Detection Using Deep Neural Networks**  
+   *arXiv:1707.01836*
 
-5. Yao, Q. et al.  
-   **Time-Invariant Representation Learning for ECG Classification**  
-   *IEEE Transactions on Biomedical Engineering, 2020.*
-
----
-
-## 12. Disclaimer
-
-This project follows **strict evaluation protocols**.  
-All reported results are obtained **without data leakage**, **without test-set tuning**, and **without metric cherry-picking**.
+5. Tan & Le  
+   **EfficientNet: Rethinking Model Scaling for CNNs**  
+   *ICML, 2019*
 
 ---
 
-## 13. Author Note
+## Disclaimer
 
-This work was developed as a **research-oriented engineering project**, emphasizing:
+This system is **for research and demonstration purposes only**  
+and **not intended for clinical diagnosis or treatment**.
 
-- efficiency over scale,
-- reproducibility over inflated metrics,
-- and honest analysis over paper-style optimization.
+---
 
-The goal is to demonstrate **what is realistically achievable** with well-designed lightweight models on real ECG data.
+## Author Note
+
+This project emphasizes:
+- **engineering discipline**
+- **honest evaluation**
+- **deployment realism**
+- and **model efficiency**
+
+rather than leaderboard chasing.
