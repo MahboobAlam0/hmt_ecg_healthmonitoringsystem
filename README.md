@@ -70,7 +70,8 @@ There is **no patient leakage**, **no test-set tuning**, and **no post-hoc thres
 ## Architecture: HMT-ECGNet
 
 ### High-Level Design
-├── ...
+
+
 ├─ 12-Lead ECG (10s)
 │
 ├─ Shared per-lead temporal encoder
@@ -82,7 +83,6 @@ There is **no patient leakage**, **no test-set tuning**, and **no post-hoc thres
 ├─ Global temporal pooling
 │
 └─ Classification head
-└── ...
 
 ### Design Principles
 
