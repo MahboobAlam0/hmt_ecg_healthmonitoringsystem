@@ -1,0 +1,21 @@
+# ECG DATASET 
+EcgDataset/
+*.hea
+*.dat
+
+# Python / ML
+.pytest_cache
+__pycache__/
+*.pyc
+*.pyo
+*.pth
+*.pt
+
+# Virtual environment
+
+venv/
+.env
+
+# artifacts
+
+artifacts/
