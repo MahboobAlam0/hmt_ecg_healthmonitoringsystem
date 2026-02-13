@@ -40,33 +40,6 @@ However, such models:
 
 ---
 
-## Dataset
-
-### PTB-XL (PhysioNet, 2020)
-
-- ~21,800 ECG recordings  
-- 12 leads  
-- 10 seconds per ECG  
-- Original sampling: 500 Hz (downsampled during preprocessing)
-- Official **patient-level splits**:
-  - Train: folds 1–8
-  - Validation: fold 9
-  - Test: fold 10
-
-### Tasks
-
-- **Multi-label classification (5 diagnostic superclasses)**
-  - NORM, MI, STTC, CD, HYP
-- **Binary classification**
-  - MI vs Normal
-  - Normal vs Abnormal
-
-⚠️ **Important:**  
-All experiments strictly follow official PTB-XL splits.  
-There is **no patient leakage**, **no test-set tuning**, and **no post-hoc threshold optimization**.
-
----
-
 ## Architecture: HMT-ECGNet
 
 ### High-Level Design
@@ -145,6 +118,58 @@ Accuracy saturates due to ambiguous ECGs, while AUROC remains high — indicatin
 | **HMT-ECGNet (ours)** | **0.34M** | **≈ 0.92** | **≈ 0.73** |
 
 **HMT-ECGNet outperforms ResNet while using ~25× fewer parameters**
+
+---
+
+## Demo
+
+Due to dataset licensing and size constraints, this project is not deployed as a public live demo.
+
+However, the **full inference and visualization pipeline is implemented and reproducible locally**.
+
+To launch the interactive ECG visualization and AI diagnosis interface:
+
+```bash
+streamlit run app.py
+```
+## Demo Video
+
+[![ECG Demo](artifacts/demo.png)](https://github.com/MahboobAlam0/hmt_ecg_healthmonitoringsystem/issues/1#issue-3938528989)
+
+
+That’s it.  
+That section alone answers **three recruiter questions** at once:
+- “Why no demo?”
+- “Does it actually run?”
+- “Can I try it if I want?”
+
+---
+
+
+## Dataset
+
+### PTB-XL (PhysioNet, 2020)
+
+- ~21,800 ECG recordings  
+- 12 leads  
+- 10 seconds per ECG  
+- Original sampling: 500 Hz (downsampled during preprocessing)
+- Official **patient-level splits**:
+  - Train: folds 1–8
+  - Validation: fold 9
+  - Test: fold 10
+
+### Tasks
+
+- **Multi-label classification (5 diagnostic superclasses)**
+  - NORM, MI, STTC, CD, HYP
+- **Binary classification**
+  - MI vs Normal
+  - Normal vs Abnormal
+
+⚠️ **Important:**  
+All experiments strictly follow official PTB-XL splits.  
+There is **no patient leakage**, **no test-set tuning**, and **no post-hoc threshold optimization**.
 
 ---
 
