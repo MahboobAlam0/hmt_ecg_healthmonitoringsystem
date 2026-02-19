@@ -13,9 +13,6 @@ DEVICE = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 CLASSES = ["NORM", "MI", "STTC", "CD", "HYP"]
 
 
-# ------------------------------------------------------------
-# USE YOUR FINAL CHECKPOINT (NOT logs crawling)
-# ------------------------------------------------------------
 CKPT_PATH = r"D:\Health Monitoring System\artifacts\multilabel_best.pth"
 
 
@@ -25,9 +22,7 @@ def main():
 
     print("Using checkpoint:", CKPT_PATH)
 
-    # --------------------------------------------------------
     # Dataset (VAL split)
-    # --------------------------------------------------------
     val_ds = PTBXLDataset(split="val", task="multilabel")
     val_loader = DataLoader(
         val_ds,
@@ -36,17 +31,13 @@ def main():
         num_workers=0
     )
 
-    # --------------------------------------------------------
     # Model
-    # --------------------------------------------------------
     model = HMT_ECGNet(num_classes=5, num_leads=N_LEADS).to(DEVICE)
     ckpt = torch.load(CKPT_PATH, map_location=DEVICE, weights_only=True)
     model.load_state_dict(ckpt["model_state_dict"])
     model.eval()
 
-    # --------------------------------------------------------
     # Collect outputs
-    # --------------------------------------------------------
     all_probs, all_targets = [], []
 
     with torch.no_grad():
@@ -59,9 +50,7 @@ def main():
     probs = np.vstack(all_probs)
     targets = np.vstack(all_targets)
 
-    # --------------------------------------------------------
     # Threshold search
-    # --------------------------------------------------------
     thresholds = {}
 
     print("\nSearching optimal thresholds per class...\n")
@@ -79,9 +68,7 @@ def main():
         thresholds[cls] = float(best_t)
         print(f"{cls}: threshold = {best_t:.3f}, F1 = {best_f1:.4f}")
 
-    # --------------------------------------------------------
-    # Save thresholds to artifacts (VERY IMPORTANT)
-    # --------------------------------------------------------
+    # Save thresholds to artifacts
     save_path = r"D:\Health Monitoring System\artifacts\multilabel_thresholds.json"
 
     with open(save_path, "w") as f:

@@ -39,10 +39,6 @@ def preprocess_signal(sig, fs_orig=FS_ORIG, fs_target=FS_TARGET):
     T_orig = sig.shape[1]
     target_len = int(round(T_orig * fs_target / fs_orig))
     sig = resample(sig, target_len, axis=1)
-
-    # ----------------------------------------------------
-    # 🔥 CRITICAL FIX: center crop instead of pad/start-cut
-    # ----------------------------------------------------
     T = sig.shape[1]
 
     if T >= TARGET_LEN:

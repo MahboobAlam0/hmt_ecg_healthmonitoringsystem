@@ -7,19 +7,14 @@ from sklearn.metrics import roc_auc_score, f1_score
 
 from dataset import PTBXLDataset
 from config import BATCH_SIZE
-from models.resnet1d import ResNet1D  # you created this file earlier
+from models.resnet1d import ResNet1D  
 
 
-# -------------------------------------------------------
 # Device
-# -------------------------------------------------------
 device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 print("Using device:", device)
 
-
-# -------------------------------------------------------
 # Data
-# -------------------------------------------------------
 train_ds = PTBXLDataset(split="train", task="multilabel")
 val_ds = PTBXLDataset(split="val", task="multilabel")
 
@@ -38,9 +33,7 @@ val_loader = DataLoader(
 )
 
 
-# -------------------------------------------------------
 # Model
-# -------------------------------------------------------
 model = ResNet1D(num_classes=5).to(device)
 print("Model parameters:", sum(p.numel() for p in model.parameters()))
 
@@ -48,9 +41,7 @@ criterion = nn.BCEWithLogitsLoss()
 optimizer = torch.optim.Adam(model.parameters(), lr=1e-3)
 
 
-# -------------------------------------------------------
 # Validation function
-# -------------------------------------------------------
 @torch.no_grad()
 def evaluate(model, loader):
     model.eval()
@@ -73,18 +64,14 @@ def evaluate(model, loader):
     return auroc, f1
 
 
-# -------------------------------------------------------
 # Early stopping setup
-# -------------------------------------------------------
 PATIENCE = 6
 best_f1 = 0.0
 epochs_no_improve = 0
 best_state = None
 
 
-# -------------------------------------------------------
 # Training loop
-# -------------------------------------------------------
 for epoch in range(1, 61):
     model.train()
     running_loss = 0.0
@@ -102,7 +89,7 @@ for epoch in range(1, 61):
 
     train_loss = running_loss / len(train_loader)
 
-    # ---------------- Validation ----------------
+    # Validation
     val_auroc, val_f1 = evaluate(model, val_loader)
 
     print(
@@ -112,7 +99,7 @@ for epoch in range(1, 61):
         f"F1_macro={val_f1:.4f}"
     )
 
-    # ---------------- Early stopping ----------------
+    # Early stopping
     if val_f1 > best_f1:
         best_f1 = val_f1
         epochs_no_improve = 0
@@ -127,9 +114,7 @@ for epoch in range(1, 61):
             break
 
 
-# -------------------------------------------------------
 # Save best model
-# -------------------------------------------------------
 print("\nSaving best ResNet baseline model...")
 torch.save(
     {"model_state_dict": best_state},

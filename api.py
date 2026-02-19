@@ -10,9 +10,9 @@ from models.hmt_ecgnet import HMT_ECGNet
 from config import N_LEADS
 from transforms import preprocess_signal
 
-# -------------------------------------------------------
+
 # Setup
-# -------------------------------------------------------
+
 DEVICE = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 DIAG_CLASSES = ["NORM", "MI", "STTC", "CD", "HYP"]
 
@@ -24,9 +24,8 @@ MI_BINARY_THRESHOLD = 0.05
 app = FastAPI(title="ECG Diagnostic API")
 
 
-# -------------------------------------------------------
 # Find latest checkpoint automatically
-# -------------------------------------------------------
+
 def find_ckpt():
     for root, _, files in os.walk("artifacts"):
         if "multilabel_best.pth" in files:
@@ -34,9 +33,8 @@ def find_ckpt():
     raise FileNotFoundError("multilabel_best.pth not found in artifacts/")
 
 
-# -------------------------------------------------------
 # Load model ONCE at startup
-# -------------------------------------------------------
+
 def load_model():
     ckpt_path = find_ckpt()
 
@@ -53,9 +51,8 @@ def load_model():
 model = load_model()
 
 
-# -------------------------------------------------------
 # ECG Request Schema (real device style)
-# -------------------------------------------------------
+
 class ECGRequest(BaseModel):
     lead1: List[float]
     lead2: List[float]
@@ -71,9 +68,8 @@ class ECGRequest(BaseModel):
     lead12: List[float]
 
 
-# -------------------------------------------------------
 # Prediction Endpoint
-# -------------------------------------------------------
+
 @app.post("/predict")
 def predict_ecg(req: ECGRequest):
     try:
@@ -84,9 +80,7 @@ def predict_ecg(req: ECGRequest):
             req.lead9, req.lead10, req.lead11, req.lead12
         ])
 
-        # ---------------------------------------------------
         # Auto-select correct 10s window (like real systems)
-        # ---------------------------------------------------
         fs = 500
         window = 10 * fs
 
@@ -94,16 +88,12 @@ def predict_ecg(req: ECGRequest):
             start = raw.shape[1] // 2 - window // 2
             raw = raw[:, start:start + window]
 
-        # ---------------------------------------------------
         # Preprocess exactly like training
-        # ---------------------------------------------------
         ecg = preprocess_signal(raw)
 
         x = torch.tensor(ecg, dtype=torch.float32).unsqueeze(0).to(DEVICE)
 
-        # ---------------------------------------------------
         # Model inference
-        # ---------------------------------------------------
         with torch.no_grad():
             probs = torch.sigmoid(model(x)).cpu().numpy()[0]
 

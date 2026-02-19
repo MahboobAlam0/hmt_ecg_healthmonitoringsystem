@@ -19,18 +19,14 @@ from utils_seed import set_seed
 from config import BATCH_SIZE, LR, WEIGHT_DECAY, N_EPOCHS, N_LEADS
 
 
-# ------------------------------------------------------------
 # Arguments
-# ------------------------------------------------------------
 parser = argparse.ArgumentParser()
 parser.add_argument("--epochs", type=int, default=N_EPOCHS)
 parser.add_argument("--patience", type=int, default=8)
 args = parser.parse_args()
 
 
-# ------------------------------------------------------------
 # DataLoader
-# ------------------------------------------------------------
 def get_loader(ds, shuffle):
     return DataLoader(
         ds,
@@ -41,9 +37,7 @@ def get_loader(ds, shuffle):
     )
 
 
-# ------------------------------------------------------------
 # Compute class imbalance weights
-# ------------------------------------------------------------
 def compute_pos_weights(dataset):
     print("Computing class imbalance weights...")
 
@@ -62,9 +56,7 @@ def compute_pos_weights(dataset):
     return weights
 
 
-# ------------------------------------------------------------
 # Asymmetric Focal Loss
-# ------------------------------------------------------------
 class AsymmetricFocalLoss(nn.Module):
     def __init__(self, gamma_pos=2, gamma_neg=1, pos_weight=None):
         super().__init__()
@@ -94,9 +86,7 @@ class AsymmetricFocalLoss(nn.Module):
         return loss.mean()
 
 
-# ------------------------------------------------------------
 # Plot Curves
-# ------------------------------------------------------------
 def plot_curves(history, save_dir):
 
     epochs = range(1, len(history["loss"]) + 1)
@@ -126,9 +116,7 @@ def plot_curves(history, save_dir):
     plt.close()
 
 
-# ------------------------------------------------------------
 # Main
-# ------------------------------------------------------------
 def main():
 
     set_seed(42)
@@ -184,9 +172,7 @@ def main():
         "val_f1": [],
     }
 
-    # ==================================================
     # Training Loop
-    # ==================================================
     for epoch in range(1, args.epochs + 1):
 
         # ===== Train =====

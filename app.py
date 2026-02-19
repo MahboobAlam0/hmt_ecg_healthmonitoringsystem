@@ -11,9 +11,7 @@ from scipy.signal import butter, filtfilt, resample
 
 from config import PTBXL_ROOT
 
-# ============================================================
 # CONFIG
-# ============================================================
 API_URL = "http://127.0.0.1:8000/predict"
 
 LEAD_NAMES = [
@@ -26,9 +24,7 @@ FS_TARGET = 100
 DURATION_SEC = 10
 TARGET_LEN = FS_TARGET * DURATION_SEC
 
-# ============================================================
 # PAGE SETUP
-# ============================================================
 st.set_page_config(
     page_title="ECG AI Diagnostic System",
     layout="wide",
@@ -40,9 +36,7 @@ st.markdown(
     "Lightweight hierarchical model • No data leakage • Realistic evaluation"
 )
 
-# ============================================================
 # DATA LOADING (CACHED)
-# ============================================================
 @st.cache_data(show_spinner=False)
 def load_test_metadata():
     df = pd.read_csv(os.path.join(PTBXL_ROOT, "ptbxl_database.csv"))
@@ -66,9 +60,7 @@ def load_and_preprocess_ecg(filename):
 
 df_test = load_test_metadata()
 
-# ============================================================
 # ECG PLOTTING
-# ============================================================
 def plot_ecg_frame(ecg, end_idx):
     fig, axes = plt.subplots(12, 1, figsize=(24, 14), sharex=True)
 
@@ -88,9 +80,7 @@ def plot_ecg_frame(ecg, end_idx):
     plt.tight_layout()
     return fig
 
-# ============================================================
 # SIDEBAR CONTROLS
-# ============================================================
 st.sidebar.header("ECG Sample Selector")
 
 sample_idx = st.sidebar.slider(
@@ -103,9 +93,7 @@ sample_idx = st.sidebar.slider(
 row = df_test.iloc[sample_idx]
 ecg = load_and_preprocess_ecg(row["filename_hr"])
 
-# ============================================================
 # ECG ANIMATION (AUTO PLAY)
-# ============================================================
 st.subheader(f"ECG Sample #{sample_idx}")
 
 plot_placeholder = st.empty()
@@ -116,9 +104,7 @@ for t in range(50, TARGET_LEN + 1, 25):
     plt.close(fig)
     time.sleep(0.025)
 
-# ============================================================
 # AI INFERENCE (ONCE)
-# ============================================================
 st.subheader("AI Diagnosis")
 
 payload = {
@@ -138,9 +124,7 @@ except Exception:
     )
     st.stop()
 
-# ============================================================
 # RESULTS DISPLAY
-# ============================================================
 st.markdown("### Per-class Probabilities")
 
 cols = st.columns(5)
@@ -159,6 +143,6 @@ st.markdown("### Myocardial Infarction Screening")
 st.metric("MI Probability", f"{result['mi_probability']:.3f}")
 
 if result["mi_risk"]:
-    st.error("⚠️ High likelihood of Myocardial Infarction")
+    st.error("High likelihood of Myocardial Infarction")
 else:
     st.success("No strong MI indication")

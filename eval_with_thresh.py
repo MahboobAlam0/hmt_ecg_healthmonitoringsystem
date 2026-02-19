@@ -5,7 +5,7 @@ import numpy as np
 from sklearn.metrics import accuracy_score, f1_score, roc_auc_score, confusion_matrix
 from torch.utils.data import DataLoader
 
-from dataset import PTBXLDiagnosticDataset   # adjust if your file name differs
+from dataset import PTBXLDiagnosticDataset
 from models import HMT_ECGNet
 from config import N_LEADS, BATCH_SIZE
 

@@ -44,7 +44,8 @@ However, such models:
 
 ### High-Level Design
 
-
+<markdown> <code>
+```
 ├─ 12-Lead ECG (10s)
 │
 ├─ Shared per-lead temporal encoder
@@ -56,6 +57,13 @@ However, such models:
 ├─ Global temporal pooling
 │
 └─ Classification head
+``` 
+</code> </markdown>
+
+```markdown
+![HMT-ECGNet Architecture](artifacts/hmt_ecgnet_architecture.jpg)
+```
+
 
 ### Design Principles
 
@@ -73,7 +81,7 @@ However, such models:
 - Optimizer: **AdamW**
 - Learning rate schedule: **Cosine Annealing**
 - Loss:
-  - Multi-label: `BCEWithLogitsLoss` with class balancing
+  - Multi-label: `AsymmetricFocalLoss` with class balancing
   - Binary: `BCEWithLogitsLoss`
 - Regularization:
   - Signal preprocessing
@@ -189,7 +197,8 @@ There is **no patient leakage**, **no test-set tuning**, and **no post-hoc thres
 
 
 ## Project Structure
-
+<markdown> <code>
+```
 ├── hmt_ecgnet/
 ├── artifacts/
 │   ├── mi_best.pth
@@ -213,7 +222,7 @@ There is **no patient leakage**, **no test-set tuning**, and **no post-hoc thres
 ├── threshold_search_multilabel.py
 ├── config.py
 └── README.md
-
+``` </code> </markdown>
 
 ---
 
