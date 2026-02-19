@@ -44,8 +44,8 @@ However, such models:
 
 ### High-Level Design
 
-<markdown> <code>
-```
+``` markdown
+
 ├─ 12-Lead ECG (10s)
 │
 ├─ Shared per-lead temporal encoder
@@ -58,7 +58,7 @@ However, such models:
 │
 └─ Classification head
 ``` 
-</code> </markdown>
+
 
 
 ![HMT-ECGNet Architecture](artifacts/hmt_ecgnet_architecture.jpg)
@@ -197,8 +197,8 @@ There is **no patient leakage**, **no test-set tuning**, and **no post-hoc thres
 
 
 ## Project Structure
-<markdown> <code>
-```
+
+```markdown
 ├── hmt_ecgnet/
 ├── artifacts/
 │   ├── mi_best.pth
@@ -222,7 +222,7 @@ There is **no patient leakage**, **no test-set tuning**, and **no post-hoc thres
 ├── threshold_search_multilabel.py
 ├── config.py
 └── README.md
-``` </code> </markdown>
+```   
 
 ---
 
