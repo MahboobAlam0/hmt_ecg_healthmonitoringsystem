@@ -60,9 +60,9 @@ However, such models:
 ``` 
 </code> </markdown>
 
-```markdown
+
 ![HMT-ECGNet Architecture](artifacts/hmt_ecgnet_architecture.jpg)
-```
+
 
 
 ### Design Principles
