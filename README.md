@@ -1,3 +1,13 @@
+---
+title: HMT-ECGNet
+colorFrom: red
+colorTo: blue
+sdk: streamlit
+sdk_version: "1.28.0"
+app_file: app.py
+pinned: false
+license: mit
+---
 # HMT-ECGNet  
 **Lightweight Hierarchical Multi-Lead ECG Classification on PTB-XL**
 
